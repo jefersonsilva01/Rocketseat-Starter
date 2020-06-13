@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Desafio 3</title>
+</head>
+<body>
+
+    <h1>3º exercício</h1>
+
+    <p>A partir do seguinte vetor:
+        var nomes = ["Diego", "Gabriel", "Lucas"];
+        Preencha uma lista ( ul ) no HTML com os itens da seguinte forma:
+        ● Diego
+        ● Gabriel
+        ● Lucas    
+    </p>
+
+    <ul class="nomes">
+
+    </ul>
+
+    <script>
+
+        var nomes = ["Diego", "Gabriel", "Lucas"];
+
+        let area = document.querySelector('.nomes')
+
+        for(i = 0; i < nomes.length; i++){
+            const list = document.createElement('li')
+            const nome = document.createTextNode(nomes[i])
+            area.appendChild(list)
+            list.appendChild(nome)
+        }
+
+    </script>
+    
+</body>
+</html>

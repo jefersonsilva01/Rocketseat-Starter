@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Desafio 4</title>
+</head>
+<body>
+
+    <h1>4º exercício</h1>
+
+
+    <!-- Seguindo o resultado do exercício anterior adicione um input em tela e um botão como a seguir:
+    <input type="text" name="nome">
+    <button onClick="adicionar()">Adicionar</button>
+    Ao clicar no botão, a função adicionar() deve ser disparada adicionando um novo item a lista denomes baseado no nome preenchido no input e renderizando o novo item em tela juntos aos
+    demais itens anteriores. Além disso, o conteúdo do input deve ser apagado após o clique. -->
+
+    <input type="text" name="nome">
+    <button onClick="adicionar()">Adicionar</button>
+
+    <ul class="nomes">
+
+    </ul>
+
+    <script>
+
+        function adicionar(){
+            const novoNome = document.querySelector('input').value
+
+            const area = document.querySelector('.nomes')
+
+            const list = document.createElement('li')
+
+            area.appendChild(list)
+            list.innerHTML = novoNome
+
+            document.querySelector('input').value = ''
+        }
+
+        var nomes = ["Diego", "Gabriel", "Lucas"];
+
+        let area = document.querySelector('.nomes')
+
+        for(i = 0; i < nomes.length; i++){
+            const list = document.createElement('li')
+            const nome = document.createTextNode(nomes[i])
+            area.appendChild(list)
+            list.appendChild(nome)
+        }
+
+    </script>
+    
+</body>
+</html>
