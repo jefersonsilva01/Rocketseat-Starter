@@ -1,159 +1,94 @@
-/* Exercícios: Módulo 02
-Todos os exercícios abaixo necessitam que você esteja com o Webpack configurado.
-1o exercício
-Crie um arquivo chamado functions.js com o seguinte conteúdo:
-export const idade = 23;
-export default class Usuario {
-static info() {
-console.log('Apenas teste');
-}
-}
-1.1
-Agora em seu arquivo principal import apenas a classe Usuario renomeando-a para ClasseUsuario
-e chame a funão info() ;
-1.2
-Em seu arquivo principal importe a variável de idade e exiba a mesma em tela;
-1.3
-Em seu arquivo princip */
+import api from './api'
 
-/* console.log('test')
-alert('Test') */
+class App {
+    constructor(){
+        this.repositories = []
 
-/* import ClasseUsuario, { idade as IdadeUsuario } from './functions.js'
+        this.formEl = document.getElementById('repo-form')
+        this.inputEl = document.querySelector('input[name=repository]')
+        this.listEl = document.getElementById('repo-list')
 
-ClasseUsuario.info()
-console.log(IdadeUsuario) */
-
-
-/* Exercícios: Módulo 03
-Todos os exercícios abaixo necessitam que você esteja com o plugin do Async/Await do Babel e o
-babel-polyfill devidamente configurados. Em alguns exercícios é necessário instalar o Axios.
-Exercício
-Transforme os seguintes trechos de código utilizando async/await: */
-
-/* // Funão delay aciona o .then após 1s
-const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
-function umPorSegundo() {
-delay().then(() => {
-console.log('1s');
-delay().then(() => {
-console.log('2s');
-delay().then(() => {
-console.log('3s');
-});
-})
-});
-}
-umPorSegundo(); */
-
-// Funão delay aciona o .then após 1s
-/* const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
-
-function umPorSegundo() {
-    delay().then(() => {
-        console.log('1s');
-        
-        delay().then(() => {
-            console.log('2s');
-
-                delay().then(() => {
-                    console.log('3s');
-                });
-        })
-    }); 
-}
-umPorSegundo(); */
-
-const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
-
-const umPorSegundo = async () => {
-    await delay() 
-    console.log('1s')
-    await delay() 
-    console.log('2s')
-    await delay() 
-    console.log('3s')
-}
-
-umPorSegundo();
-
-/* import axios from 'axios';
-
-function getUserFromGithub(user) {
-    axios.get(`https://api.github.com/users/${user}`)
-        .then(response => {
-            console.log(response.data);
-        })
-        .catch(err => {
-            console.log('Usuário não existe');
-        })
-}
-
-getUserFromGithub('diego3g');
-getUserFromGithub('diego3g124123'); */
-
-import axios from 'axios'
-
-const getUserFromGithub = async (user) => {
-    try {
-        const response = await axios.get(`https://api.github.com/users/${user}`)
-        console.log(response)
-    } catch (err){
-        console.warn('Erro na API');
+        this.registerHandlers();
     }
-}
 
-getUserFromGithub('Jeferson1')
-getUserFromGithub('diego3g124123')
-
-/* class Github {
-    static getRepositories(repo) {
-        axios.get(`https://api.github.com/repos/${repo}`)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(err => {
-               console.log('Repositório não existe');})
+    registerHandlers(){
+        this.formEl.onsubmit = event => this.addRepository(event)
     }
-}
 
-Github.getRepositories('rocketseat/rocketseat.com.br');
-Github.getRepositories('rocketseat/dslkvmskv'); */
+    setLoading(loading = true){
+        if(loading === true){
+            let loadingEl = document.createElement('span')
+            loadingEl.appendChild(document.createTextNode('Carregando'))
+            loadingEl.setAttribute('id', 'loading')
 
-class Github {
-    static async getRepositories(repo){
-        try {
-            const response = await axios.get(`https://api.github.com/repos/${repo}`)
-            console.log(response.data)
-        } catch (err) {
-            console.warn('Repositório não existe')
+            this.formEl.appendChild(loadingEl)
+        } else {
+            document.getElementById('loading').remove()
         }
     }
-}
+    
+    async addRepository(event){
+        event.preventDefault()
 
-Github.getRepositories('rocketseat/rocketseat.com.br');
-Github.getRepositories('Jeferson1/Jeferson1');
+        const repoInput = this.inputEl.value
 
-/* const buscaUsuario = usuario => {
-    axios.get(`https://api.github.com/users/${user}`)
-        .then(response => {
-            console.log(response.data);
+        if (repoInput.length === 0)
+            return;
+
+        this.setLoading()
+
+        try {
+            const response = await api.get(`/repos/${repoInput}`)
+
+            console.log(response)
+
+            const { name, description, html_url, owner: { avatar_url} } = response.data
+
+            this.repositories.push({
+                name,
+                description,
+                avatar_url,
+                html_url,
+            })
+
+            this.inputEl.value = ''
+
+            this.render()
+
+        } catch (err) {
+            alert('O repositório não existe!')
+        }
+
+        this.setLoading(false)
+    }
+
+    render(){
+        this.listEl.innerHTML = '';
+
+        this.repositories.forEach(repo => {
+            let imgEl = document.createElement('img')
+            imgEl.setAttribute('src', repo.avatar_url);
+
+            let titleEl = document.createElement('strong')
+            titleEl.appendChild(document.createTextNode(repo.name))
+
+            let descriprionEl = document.createElement('p')
+            descriprionEl.appendChild(document.createTextNode(repo.description))
+
+            let linkEl = document.createElement('a')
+            linkEl.setAttribute('target', '_blank')
+            linkEl.setAttribute('href', repo.html_url)
+            linkEl.appendChild(document.createTextNode('Acessar')) 
+
+            let listItemEl = document.createElement('li')
+            listItemEl.appendChild(imgEl)
+            listItemEl.appendChild(titleEl)
+            listItemEl.appendChild(descriprionEl)
+            listItemEl.appendChild(linkEl)
+
+            this.listEl.appendChild(listItemEl)
         })
-        .catch(err => {
-            console.log('Usuário não existe');
-        });
-}
-
-buscaUsuario('diego3g'); */
-
-const buscaUsuario = async usuario => {
-    try {
-        const response = await axios.get(`https://api.github.com/users/${usuario}`)
-        console.log(response.data)
-    } catch(err) {
-        console.warn('Usuário não existe')
     }
 }
 
-buscaUsuario('diego3aasw');
-buscaUsuario('Jeferson1');
+new App();
