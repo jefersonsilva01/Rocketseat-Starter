@@ -10,6 +10,4 @@ routes.post('/products', ProductsController.store)
 routes.put('/products/:id', ProductsController.update)
 routes.delete('/products/:id', ProductsController.destroy)
 
-
-
 module.exports = routes
